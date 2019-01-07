@@ -4,7 +4,12 @@ import WebFont from 'webfontloader';
 import './index.css';
 
 function Square(props) {
-	let className="square col-"+props.column;
+	let className = new String();
+	
+	if (props.isWinner) {
+		className="winner ";
+	}
+	className=className+"square col-"+props.column;
 	
 	return (
 		<button 
@@ -17,12 +22,13 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-	renderSquare(i,column) {
+	renderSquare(i,column,isWinner) {
 		return (
 			<Square 
 				value={this.props.squares[i]}
 				onClick={()=> this.props.onClick(i)}
 				column={column}
+				isWinner={isWinner}
 				key={i}
 			/>
 		);
@@ -32,10 +38,21 @@ class Board extends React.Component {
 		const boardSize=3;
 		const boardClass="board-row row-";
 		let squares=[];
+		let winner = this.props.winnerInfo.winner;
+		let winnerLine;
+		if (winner) {
+			winnerLine = this.props.winnerInfo.lines;
+		}
+
 		for (let i=0; i<boardSize;i++) {
 			let row=[];
 			for (let j=0; j<boardSize; j++) {
-				row.push(this.renderSquare((i*boardSize)+j,j));
+				let squareID = i*boardSize+j;
+				let isWinner=false;
+				if (winner) {
+					isWinner=winnerLine.includes(squareID);
+				}
+				row.push(this.renderSquare(squareID,j,isWinner));
 			}
 			
 			squares.push(<div key={i} className={boardClass+i}>{row}</div>);
@@ -68,7 +85,7 @@ class Game extends React.Component {
 		const history = this.state.history.slice(0,this.state.stepNumber+1);
 		const current = history[history.length-1];
 		const squares = current.squares.slice();
-		if (calculateWinner(squares)||squares[i]) {
+		if (calculateWinner(squares).winner||squares[i]) {
 			return;
 		}
 		squares[i] = this.state.currentTurn[+this.state.xIsCurrent];
@@ -97,7 +114,9 @@ class Game extends React.Component {
 	render() {
 		const history = this.state.history;
 		const current = history[this.state.stepNumber];
-		const winner = calculateWinner(current.squares);
+		const winnerInfo = calculateWinner(current.squares);
+		const winner = winnerInfo.winner;
+	
 		const lastStepNum =this.state.lastSelectedStepNumber;
 		const currentStepNum = this.state.stepNumber;
 		
@@ -131,6 +150,7 @@ class Game extends React.Component {
 			<Board 
 				squares={current.squares}
 				onClick={(i) => this.handleSquareClick(i)}
+				winnerInfo={winnerInfo}
 			/>
 			</div>
 			<div className="game-info">
@@ -164,10 +184,15 @@ function calculateWinner(squares) {
 		if (squares[a] // don't understand this first one here...
 			&& squares[a] === squares[b] 
 			&& squares[b] === squares[c]) {
-				return squares[a];
+				return {
+					winner: squares[a],
+					lines:lines[i],
+				}
 			}
 	}
-	return null;
+	return {
+		winner:null
+	};
 }
 
 function selectedMove(move,stepNum) {

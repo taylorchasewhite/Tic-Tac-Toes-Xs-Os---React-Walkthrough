@@ -85,3 +85,7 @@ ol, ul {
 .selected,.selected button {
 	font-weight: bold;
 }
+
+.winner {
+	color:#69c300;
+}
