@@ -36,6 +36,21 @@ ol, ul {
 	width: 100px;
 }
 
+.row-0 .square {
+	border-top:none;
+}
+.row-2 .square {
+	border-bottom:none;
+}
+
+.square.col-0 {
+	border-left:none;
+}
+
+.square.col-2 {
+	border-right:none;
+}
+
 .square:focus {
 	outline: none;
 }
@@ -51,4 +66,22 @@ ol, ul {
 
 .game-info {
 	margin-left: 20px;
+	width:250px;
+}
+
+.game-turn {
+	font-size: 3em;
+}
+
+.game-info button {
+	background:none;
+	border:none;
+}
+
+.game-info button:hover {
+	font-weight: bold;
+}
+
+.selected,.selected button {
+	font-weight: bold;
 }

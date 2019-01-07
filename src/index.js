@@ -23,6 +23,7 @@ class Board extends React.Component {
 				value={this.props.squares[i]}
 				onClick={()=> this.props.onClick(i)}
 				column={column}
+				key={i}
 			/>
 		);
 	}
@@ -37,7 +38,7 @@ class Board extends React.Component {
 				row.push(this.renderSquare((i*boardSize)+j,j));
 			}
 			
-			squares.push(<div className={boardClass+i}>{row}</div>);
+			squares.push(<div key={i} className={boardClass+i}>{row}</div>);
 		}
 
 		return (
@@ -58,6 +59,7 @@ class Game extends React.Component {
 			}],
 			currentTurn: ['X','O'],
 			stepNumber:0,
+			lastSelectedStepNumber:null,
 			xIsCurrent: Math.round(Math.random()),
 		}
 	}
@@ -81,8 +83,10 @@ class Game extends React.Component {
 	jumpTo(stepNumber) {
 		const currentPlayerIsX = this.state.xIsCurrent;
 		const currentStepNumber = this.state.stepNumber;
-		const playerChange = (currentStepNumber-stepNumber)%2;
-		const jumpToPlayerIsX = (currentPlayerIsX && !playerChange) || (!currentPlayerIsX && playerChange); 
+		const playerChange = Math.abs((currentStepNumber-stepNumber))%2;
+		const jumpToPlayerIsX = (Boolean) (currentPlayerIsX && !playerChange) || (!currentPlayerIsX && playerChange); 
+
+
 		this.setState({
 			stepNumber:stepNumber,
 			xIsCurrent:jumpToPlayerIsX
@@ -94,6 +98,8 @@ class Game extends React.Component {
 		const history = this.state.history;
 		const current = history[this.state.stepNumber];
 		const winner = calculateWinner(current.squares);
+		const lastStepNum =this.state.lastSelectedStepNumber;
+		const currentStepNum = this.state.stepNumber;
 		
 		/* Get history of moves */
 		const moves = history.map((step,move) => {
@@ -101,7 +107,7 @@ class Game extends React.Component {
 				'Move ' + move :
 				'Go to the start';
 			return (
-				<li key={move}>
+				<li key={move} className={selectedMove(move,currentStepNum)}>
 					<button onClick={()=>this.jumpTo(move)}>{description}</button>
 				</li>
 			);
@@ -125,14 +131,19 @@ class Game extends React.Component {
 			/>
 			</div>
 			<div className="game-info">
-			<div>{status}</div>
+			<div className="game-turn">{status}</div>
 			<ol>{moves}</ol>
 			</div>
 		</div>
 		);
 	}
 }
-
+/**
+ * 
+ *
+ * @param {*} squares
+ * @returns
+ */
 function calculateWinner(squares) {
 	const lines = [
 		[0,1,2],
@@ -154,6 +165,12 @@ function calculateWinner(squares) {
 			}
 	}
 	return null;
+}
+
+function selectedMove(move,stepNum) {
+	if (move===stepNum) {
+		return "selected";
+	}
 }
 
 // ========================================
