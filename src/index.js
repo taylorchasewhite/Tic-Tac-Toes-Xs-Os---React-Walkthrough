@@ -73,10 +73,11 @@ class Game extends React.Component {
 		this.state = {
 			history:[{
 				squares: Array(9).fill(null),
+				lastSelectedSquareID:null,
+				lastPlayer:null,
 			}],
 			currentTurn: ['X','O'],
 			stepNumber:0,
-			lastSelectedStepNumber:null,
 			xIsCurrent: Math.round(Math.random()),
 			isSortAscending:true
 		}
@@ -91,7 +92,11 @@ class Game extends React.Component {
 		}
 		squares[i] = this.state.currentTurn[+this.state.xIsCurrent];
 		this.setState({
-			history:history.concat([{squares:squares}]),
+			history:history.concat([{
+				squares:squares,
+				lastSelectedSquareID:i,
+				lastPlayer:this.state.currentTurn[+this.state.xIsCurrent],
+			}]),
 			stepNumber: history.length,
 			xIsCurrent:!this.state.xIsCurrent,
 		});
@@ -125,15 +130,19 @@ class Game extends React.Component {
 		const winnerInfo = calculateWinner(current.squares);
 		const winner = winnerInfo.winner;
 		const isSortAscending= this.state.isSortAscending;
-	
-		const lastStepNum =this.state.lastSelectedStepNumber;
+
 		const currentStepNum = this.state.stepNumber;
 		
 		/* Get history of moves */
 		let moves = history.map((step,move) => {
+			const lastSelectedSquareID=step.lastSelectedSquareID;
+			console.log(step);
+			const player = step.lastPlayer;
+			const column = 1+lastSelectedSquareID%3;
+			const row = 1+ (Math.floor(lastSelectedSquareID/3));
 			const description = move ?
-				'Move ' + move :
-				'Go to the start';
+				`${move}: ${player} (${column}, ${row})` :
+				'First move!';
 			return (
 				<li key={move} className={selectedMove(move,currentStepNum)}>
 					<button onClick={()=>this.jumpTo(move)}>{description}</button>
@@ -173,7 +182,7 @@ class Game extends React.Component {
 				onClick={()=>this.handleSortClick()}>
 					{isSortAscending ? 'Ascending' : 'Descending'}
 			</button>
-			<ol>{moves}</ol>
+			<ul>{moves}</ul>
 			</div>
 		</div>
 		);
