@@ -3,11 +3,12 @@ import ReactDOM from 'react-dom';
 import WebFont from 'webfontloader';
 import './index.css';
 
-
 function Square(props) {
+	let className="square col-"+props.column;
+	
 	return (
 		<button 
-			className="square" 
+			className={className}
 			onClick={props.onClick}
 		>
 			{props.value}
@@ -16,34 +17,34 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-	renderSquare(i) {
+	renderSquare(i,column) {
 		return (
 			<Square 
 				value={this.props.squares[i]}
 				onClick={()=> this.props.onClick(i)}
+				column={column}
 			/>
 		);
 	}
 
 	render() {
+		const boardSize=3;
+		const boardClass="board-row row-";
+		let squares=[];
+		for (let i=0; i<boardSize;i++) {
+			let row=[];
+			for (let j=0; j<boardSize; j++) {
+				row.push(this.renderSquare((i*boardSize)+j,j));
+			}
+			
+			squares.push(<div className={boardClass+i}>{row}</div>);
+		}
+
 		return (
-		<div>
-			<div className="board-row">
-			{this.renderSquare(0)}
-			{this.renderSquare(1)}
-			{this.renderSquare(2)}
+			<div>
+				{squares};
 			</div>
-			<div className="board-row">
-			{this.renderSquare(3)}
-			{this.renderSquare(4)}
-			{this.renderSquare(5)}
-			</div>
-			<div className="board-row">
-			{this.renderSquare(6)}
-			{this.renderSquare(7)}
-			{this.renderSquare(8)}
-			</div>
-		</div>
+		
 		);
 	}
 }
