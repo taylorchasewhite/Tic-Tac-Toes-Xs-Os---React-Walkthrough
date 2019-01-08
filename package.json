@@ -2,11 +2,18 @@
   "name": "tic-tac-toe",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://taylorchasewhite.com/pages/reactTutorial",
   "dependencies": {
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-helmet": "^5.2.0",
     "react-scripts": "2.1.3",
     "webfontloader": "^1.6.28"
+  },
+  "author": {
+    "name": "Taylor White",
+    "email": "whitetc2@gmail.com",
+    "url": "https://taylorchasewhite.com/"
   },
   "scripts": {
     "start": "react-scripts start",

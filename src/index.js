@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import WebFont from 'webfontloader';
+import { Helmet } from 'react-helmet';
 import './index.css';
 
 function Square(props) {
@@ -132,6 +133,7 @@ class Game extends React.Component {
 		const isSortAscending= this.state.isSortAscending;
 
 		const currentStepNum = this.state.stepNumber;
+		let siteTitle = 'Tic Tac & Toe\'s';
 		
 		/* Get history of moves */
 		let moves = history.map((step,move) => {
@@ -158,6 +160,7 @@ class Game extends React.Component {
 		
 		if (winner) {
 			status = winner + ' wins!';
+			siteTitle += ' - ' + status;
 		} 
 		else if (!winner && currentStepNum===9) {
 			status = 'It\'s a draw!';
@@ -169,6 +172,9 @@ class Game extends React.Component {
 		return (
 		<div className="game">
 			<div className="game-board">
+			<Helmet>
+				<title>{siteTitle}</title>
+			</Helmet>
 			<Board 
 				squares={current.squares}
 				onClick={(i) => this.handleSquareClick(i)}
